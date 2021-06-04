@@ -20,9 +20,12 @@
 									"});",
 									"pm.test(\"user check\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.code).to.eql(\"code\");",
-									"    pm.expect(jsonData.name).to.eql(\"name\");",
-									"    pm.expect(jsonData.age).to.eql(23);",
+									"    pm.expect(jsonData.maker).to.eql(\"maker\");",
+									"    pm.expect(jsonData.comment).to.eql(\"comment\");",
+									"    pm.expect(jsonData.asin).to.eql(\"1234567890\");",
+									"    pm.expect(jsonData.url).to.eql(\"http://adom.com/\");",
+									"    pm.expect(jsonData.name).to.eql(\"itemname\");",
+									"    pm.expect(jsonData.price).to.eql(23);",
 									"});",
 									""
 								],
@@ -105,54 +108,6 @@
 					"response": []
 				},
 				{
-					"name": "amazon max age",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"// pm.test(\"user check\", function () {",
-									"//     var jsonData = pm.response.json();",
-									"//     pm.expect(jsonData.id).to.eql(\"id\");",
-									"//     pm.expect(jsonData.name).to.eql(\"name\");",
-									"//     pm.expect(jsonData.age).to.eql(23);",
-									"// });",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"code\": \"code\",\n    \"name\": \"name\",\n    \"age\": 150 // age > max(150)\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:1232/amazon",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "1232",
-							"path": [
-								"amazon"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "amazon inactive",
 					"event": [
 						{
@@ -160,13 +115,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Status code\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Body is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.code).to.eql(\"code\");",
-									"    pm.expect(jsonData.name).to.eql(\"name2\");",
-									"    pm.expect(jsonData.age).to.eql(56);",
+									"    pm.response.to.have.status(204);",
 									"});",
 									""
 								],
@@ -187,7 +136,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1232/amazon/inactive/asin",
+							"raw": "http://localhost:1232/amazon/inactive/1234567890",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -196,7 +145,7 @@
 							"path": [
 								"amazon",
 								"inactive",
-								"asin"
+								"1234567890"
 							]
 						}
 					},
@@ -210,13 +159,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Status code\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"pm.test(\"Body is correct\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.code).to.eql(\"code\");",
-									"    pm.expect(jsonData.name).to.eql(\"name2\");",
-									"    pm.expect(jsonData.age).to.eql(56);",
+									"    pm.response.to.have.status(204);",
 									"});",
 									""
 								],
@@ -237,7 +180,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:1232/amazon/active/asin",
+							"raw": "http://localhost:1232/amazon/active/1234567890",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -246,7 +189,7 @@
 							"path": [
 								"amazon",
 								"active",
-								"asin"
+								"1234567890"
 							]
 						}
 					},
