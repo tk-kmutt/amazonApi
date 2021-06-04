@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"gorm.io/plugin/soft_delete"
 	"time"
 )
 
@@ -13,5 +14,5 @@ type AmazonItems struct {
 	Asin      string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	IsDelete  bool
+	ACTIVE    soft_delete.DeletedAt `gorm:"softDelete:flag"`
 }

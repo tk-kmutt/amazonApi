@@ -78,7 +78,7 @@ func main() {
 			Comment:   req.Comment,
 			CreatedAt: now,
 			UpdatedAt: now,
-			IsDelete:  false,
+			ACTIVE:    repository.ACTIVE,
 		})
 		return context.JSON(http.StatusCreated, req)
 	})
@@ -86,32 +86,23 @@ func main() {
 		// リクエストを取得する
 		asin := context.Param("asin")
 		m := new(repository.AmazonItems)
-		// First
-		if tx := db.First(m, "asin = ?", asin); tx.Error != nil {
-			return context.String(http.StatusNotFound, tx.Error.Error())
-		}
 
-		m.IsDelete = true
+		m.ACTIVE = repository.INACTIVE
 		if tx := db.Model(m).Where("asin = ?", asin).Updates(m); tx.Error != nil {
 			return context.String(http.StatusBadRequest, tx.Error.Error())
 		}
 
-		return context.JSON(http.StatusAccepted, nil)
+		return context.JSON(http.StatusNoContent, nil)
 	})
 	e.PATCH("/amazon/active/:asin", func(context echo.Context) error {
 		// リクエストを取得する
 		asin := context.Param("asin")
 		m := new(repository.AmazonItems)
-		// First
-		if tx := db.First(m, "asin = ?", asin); tx.Error != nil {
-			return context.String(http.StatusNotFound, tx.Error.Error())
-		}
-
-		if tx := db.Model(m).Where("asin = ?", asin).Update("is_delete", false); tx.Error != nil {
+		if tx := db.Unscoped().Model(m).Where("asin = ?", asin).Update("active", repository.ACTIVE); tx.Error != nil {
 			return context.String(http.StatusBadRequest, tx.Error.Error())
 		}
 
-		return context.JSON(http.StatusAccepted, nil)
+		return context.JSON(http.StatusNoContent, nil)
 	})
 	e.GET("/simple/:code", func(context echo.Context) error {
 		// リクエストを取得する
