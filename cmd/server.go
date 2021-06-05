@@ -21,9 +21,11 @@ type Amazon struct {
 }
 
 type AmazonPatch struct {
-	Code *string `json:"code"`
-	Name *string `json:"name"`
-	Age  *int    `json:"age" validate:"max=150"`
+	Name    *string `json:"name" validate:"omitempty,gt=4,lt=100"`
+	Maker   *string `json:"maker" validate:"omitempty,gt=0,lt=100"`
+	Price   *int    `json:"price" validate:"omitempty,min=1,max=9999999999"`
+	Comment *string `json:"comment" validate:"omitempty,lte=256"`
+	Url     *string `json:"url" validate:"omitempty,url"`
 }
 
 type CustomValidator struct {
@@ -65,11 +67,11 @@ func main() {
 		_ = context.Bind(req)
 		// バリデーション
 		if err := context.Validate(req); err != nil {
-			return context.String(http.StatusBadRequest, err.Error())
+			return context.JSON(http.StatusBadRequest, err)
 		}
 		// Create
 		now := time.Now()
-		db.Create(&repository.AmazonItems{
+		tx := db.Create(&repository.AmazonItems{
 			Asin:      req.Asin,
 			Name:      req.Name,
 			Maker:     req.Maker,
@@ -78,8 +80,10 @@ func main() {
 			Comment:   req.Comment,
 			CreatedAt: now,
 			UpdatedAt: now,
-			ACTIVE:    repository.ACTIVE,
 		})
+		if tx.Error != nil {
+			return context.JSON(http.StatusBadRequest, tx.Error)
+		}
 		return context.JSON(http.StatusCreated, req)
 	})
 	e.PATCH("/amazon/inactive/:asin", func(context echo.Context) error {
@@ -87,9 +91,9 @@ func main() {
 		asin := context.Param("asin")
 		m := new(repository.AmazonItems)
 
-		m.ACTIVE = repository.INACTIVE
+		m.IsDelete = repository.DELETE
 		if tx := db.Model(m).Where("asin = ?", asin).Updates(m); tx.Error != nil {
-			return context.String(http.StatusBadRequest, tx.Error.Error())
+			return context.JSON(http.StatusBadRequest, tx.Error)
 		}
 
 		return context.JSON(http.StatusNoContent, nil)
@@ -98,95 +102,108 @@ func main() {
 		// リクエストを取得する
 		asin := context.Param("asin")
 		m := new(repository.AmazonItems)
-		if tx := db.Unscoped().Model(m).Where("asin = ?", asin).Update("active", repository.ACTIVE); tx.Error != nil {
-			return context.String(http.StatusBadRequest, tx.Error.Error())
+		if tx := db.Unscoped().Model(m).Where("asin = ?", asin).Update("is_delete", repository.NOT_DELETE); tx.Error != nil {
+			return context.JSON(http.StatusBadRequest, tx.Error)
 		}
 
 		return context.JSON(http.StatusNoContent, nil)
 	})
-	e.GET("/simple/:code", func(context echo.Context) error {
-		// リクエストを取得する
-		code := context.Param("code")
+	e.GET("/amazon/:asin", func(context echo.Context) error {
+		asin := context.Param("asin")
 		m := new(repository.AmazonItems)
-		if tx := db.First(m, "code = ?", code); tx.Error != nil {
-			return context.String(http.StatusNotFound, tx.Error.Error())
+		if tx := db.First(m, "asin = ?", asin); tx.Error != nil {
+			return context.JSON(http.StatusNotFound, tx.Error)
 		}
-
-		user := &Amazon{
-			//Code: m.Code,
-			//Name: m.Name,
-			//Age:  m.Age,
+		res := &Amazon{
+			Name:    m.Name,
+			Maker:   m.Maker,
+			Price:   m.Price,
+			Comment: m.Comment,
+			Url:     m.Url,
+			Asin:    m.Asin,
 		}
-		return context.JSON(http.StatusOK, user)
+		return context.JSON(http.StatusOK, res)
 	})
-	e.PUT("/simple/:code", func(context echo.Context) error {
-		// リクエストを取得する
-		code := context.Param("code")
-		user := new(Amazon)
-		// バリデーション
-		_ = context.Bind(user)
-		if err := context.Validate(user); err != nil {
+	e.PUT("/amazon/:asin", func(context echo.Context) error {
+		asin := context.Param("asin")
+		req := new(Amazon)
+		_ = context.Bind(req)
+		req.Asin = asin
+		if err := context.Validate(req); err != nil {
 			return context.JSON(http.StatusBadRequest, err)
 		}
 
-		m := new(repository.AmazonItems)
-		// First
-		if tx := db.First(m, "code = ?", code); tx.Error != nil {
-			return context.String(http.StatusNotFound, tx.Error.Error())
-		}
-		// Update
 		now := time.Now()
-		db.Model(m).
-			Where("code = ?", code).
-			Updates(repository.AmazonItems{
-				Name: user.Name,
-				//Age:       user.Age,
-				UpdatedAt: now,
-			})
-		return context.JSON(http.StatusOK, user)
+		m := &repository.AmazonItems{
+			Name:      req.Name,
+			Maker:     req.Maker,
+			Price:     req.Price,
+			Comment:   req.Comment,
+			Url:       req.Url,
+			UpdatedAt: now,
+		}
+		tx := db.Model(m).
+			Where("asin = ?", asin).
+			Updates(m)
+		if tx.Error != nil {
+			return context.JSON(http.StatusBadRequest, err)
+		}
+		return context.JSON(http.StatusOK, req)
 	})
-	e.PATCH("/simple/:code", func(context echo.Context) error {
-		// リクエストを取得する
-		code := context.Param("code")
-		user := new(AmazonPatch)
-		_ = context.Bind(user)
-		// バリデーション
-		if err := context.Validate(user); err != nil {
+	e.PATCH("/amazon/:asin", func(context echo.Context) error {
+		asin := context.Param("asin")
+		req := new(AmazonPatch)
+		_ = context.Bind(req)
+		if err := context.Validate(req); err != nil {
 			return context.JSON(http.StatusBadRequest, err)
 		}
 
 		m := new(repository.AmazonItems)
-		// First
-		if tx := db.First(m, "code = ?", code); tx.Error != nil {
-			return context.String(http.StatusNotFound, tx.Error.Error())
+		if tx := db.Model(m).Find(m, "asin = ?", asin); tx.Error != nil {
+			return context.JSON(http.StatusBadRequest, tx.Error)
 		}
 
-		tx := db.Model(m).Where("code = ?", code)
-		if user.Age != nil {
-			//m.Age = *user.Age
+		if req.Name != nil {
+			m.Name = *req.Name
 		}
-		if user.Name != nil {
-			m.Name = *user.Name
+		if req.Maker != nil {
+			m.Maker = *req.Maker
 		}
-		tx.Updates(*m)
+		if req.Price != nil {
+			m.Price = *req.Price
+		}
+		if req.Comment != nil {
+			m.Comment = *req.Comment
+		}
+		if req.Url != nil {
+			m.Url = *req.Url
+		}
+
+		tx := db.Model(m).Where("asin = ?", asin).Updates(*m)
+		if tx.Error != nil {
+			return context.JSON(http.StatusBadRequest, err)
+		}
+
 		return context.JSON(http.StatusOK, &Amazon{
-			//Code: m.Code,
-			//Name: m.Name,
-			//Age:  m.Age,
+			Name:    m.Name,
+			Maker:   m.Maker,
+			Price:   m.Price,
+			Comment: m.Comment,
+			Url:     m.Url,
+			Asin:    m.Asin,
 		})
 	})
-	e.DELETE("/simple/:code", func(context echo.Context) error {
-		// リクエストを取得する
-		code := context.Param("code")
-
+	e.DELETE("/amazon/:asin", func(context echo.Context) error {
+		asin := context.Param("asin")
 		m := new(repository.AmazonItems)
-		// First
-		if tx := db.First(m, "code = ?", code); tx.Error != nil {
-			return context.String(http.StatusNotFound, tx.Error.Error())
+		if tx := db.Unscoped().First(m, "asin = ?", asin); tx.Error != nil {
+			return context.JSON(http.StatusNotFound, tx.Error)
 		}
-		db.Delete(m, "code = ?", code)
-
-		return context.String(http.StatusNoContent, "")
+		if tx := db.Unscoped().Delete(m, "asin = ?", asin); tx.Error != nil {
+			return context.JSON(http.StatusBadRequest, tx.Error)
+		}
+		return context.JSON(http.StatusNoContent, nil)
 	})
+
 	e.Logger.Fatal(e.Start(":1232"))
 }

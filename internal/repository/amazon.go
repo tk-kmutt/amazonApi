@@ -11,8 +11,8 @@ type AmazonItems struct {
 	Price     int
 	Comment   string
 	Url       string
-	Asin      string
+	Asin      string `gorm:"unique"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	ACTIVE    soft_delete.DeletedAt `gorm:"softDelete:flag"`
+	IsDelete  soft_delete.DeletedAt `gorm:"softDelete:flag"`
 }
