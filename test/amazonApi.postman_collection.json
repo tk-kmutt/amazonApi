@@ -1,0 +1,587 @@
+{
+	"info": {
+		"_postman_id": "1e8230d9-ba6f-4d37-9d47-bab238242d82",
+		"name": "amazonApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/amazon",
+			"item": [
+				{
+					"name": "amazon no params",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"// pm.test(\"user check\", function () {",
+									"//     var jsonData = pm.response.json();",
+									"//     pm.expect(jsonData.id).to.eql(\"id\");",
+									"//     pm.expect(jsonData.name).to.eql(\"name\");",
+									"//     pm.expect(jsonData.age).to.eql(23);",
+									"// });",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1232/amazon",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test(\"user check\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.maker).to.eql(\"maker\");",
+									"    pm.expect(jsonData.comment).to.eql(\"comment\");",
+									"    pm.expect(jsonData.asin).to.eql(\"1234567890\");",
+									"    pm.expect(jsonData.url).to.eql(\"http://adom.com/\");",
+									"    pm.expect(jsonData.name).to.eql(\"itemname\");",
+									"    pm.expect(jsonData.price).to.eql(23);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"maker\": \"maker\",\n    \"comment\": \"comment\",\n    \"asin\": \"1234567890\",\n    \"url\": \"http://adom.com/\",\n    \"name\": \"itemname\",\n    \"price\": 23\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1232/amazon",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon duplication",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"maker\": \"maker\",\n    \"comment\": \"comment\",\n    \"asin\": \"1234567890\",\n    \"url\": \"http://adom.com/\",\n    \"name\": \"itemname\",\n    \"price\": 23\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1232/amazon",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.maker).to.eql(\"maker\");",
+									"    pm.expect(jsonData.comment).to.eql(\"comment\");",
+									"    pm.expect(jsonData.asin).to.eql(\"1234567890\");",
+									"    pm.expect(jsonData.url).to.eql(\"http://adom.com/\");",
+									"    pm.expect(jsonData.name).to.eql(\"itemname\");",
+									"    pm.expect(jsonData.price).to.eql(23);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:1232/amazon/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon not fount asin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:1232/amazon/notfoundasin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"notfoundasin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon inactive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1232/amazon/inactive/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"inactive",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon dont get inactive",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:1232/amazon/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon active",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1232/amazon/active/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"active",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.maker).to.eql(\"maker\");",
+									"    pm.expect(jsonData.comment).to.eql(\"comment\");",
+									"    pm.expect(jsonData.asin).to.eql(\"1234567890\");",
+									"    pm.expect(jsonData.url).to.eql(\"http://adom.com/\");",
+									"    pm.expect(jsonData.name).to.eql(\"itemname\");",
+									"    pm.expect(jsonData.price).to.eql(23);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:1232/amazon/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.maker).to.eql(\"maker_update\");",
+									"    pm.expect(jsonData.comment).to.eql(\"comment_update\");",
+									"    pm.expect(jsonData.asin).to.eql(\"1234567890\");",
+									"    pm.expect(jsonData.url).to.eql(\"http://adom.com/_update\");",
+									"    pm.expect(jsonData.name).to.eql(\"itemname_update\");",
+									"    pm.expect(jsonData.price).to.eql(234);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"maker\": \"maker_update\",\n    \"comment\": \"comment_update\",\n    \"url\": \"http://adom.com/_update\",\n    \"name\": \"itemname_update\",\n    \"price\": 234\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1232/amazon/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon empty",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.maker).to.eql(\"maker_update\");",
+									"    pm.expect(jsonData.comment).to.eql(\"comment_update\");",
+									"    pm.expect(jsonData.asin).to.eql(\"1234567890\");",
+									"    pm.expect(jsonData.url).to.eql(\"http://adom.com/_update\");",
+									"    pm.expect(jsonData.name).to.eql(\"itemname_update\");",
+									"    pm.expect(jsonData.price).to.eql(234);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1232/amazon/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.maker).to.eql(\"maker_patch\");",
+									"    pm.expect(jsonData.comment).to.eql(\"comment_patch\");",
+									"    pm.expect(jsonData.asin).to.eql(\"1234567890\");",
+									"    pm.expect(jsonData.url).to.eql(\"http://adom.com/_patch\");",
+									"    pm.expect(jsonData.name).to.eql(\"itemname_patch\");",
+									"    pm.expect(jsonData.price).to.eql(2345);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"maker\": \"maker_patch\",\n    \"comment\": \"comment_patch\",\n    \"url\": \"http://adom.com/_patch\",\n    \"name\": \"itemname_patch\",\n    \"price\": 2345\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1232/amazon/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "amazon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:1232/amazon/1234567890",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1232",
+							"path": [
+								"amazon",
+								"1234567890"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
